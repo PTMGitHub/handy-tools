@@ -10,5 +10,5 @@
 .vscode/
 *.gpg
 *.pyc
-.resize-image/resize_image/in/*
-.resize-image/resize_image/out/*
+resize-image/resize_image/in/*
+resize-image/resize_image/out/*
