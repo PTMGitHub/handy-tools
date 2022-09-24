@@ -11,6 +11,7 @@ class ResizeImage:
             "IMAGES_IN_FILE_PATH", "resize_image/in"
         )
         self.images_out_file_path = "resize_image/out"
+        self.image_quality = 70
 
     def setup_logger(self) -> None:
         logging.basicConfig(
@@ -23,7 +24,8 @@ class ResizeImage:
         if os.path.exists(self.images_in_file_path):
             print("Getting list of images")
             returned_images_list = self.get_images_list()
-            print("Image Size Reduction Started...")
+            print("Image Reduction Started...")
+            print(f"Reducing by half and to quality: {self.image_quality}")
             result = self.resize_images(returned_images_list)
             print("Image Size Reduction Done.")
             print(art("hug me"))
@@ -48,8 +50,7 @@ class ResizeImage:
             im = Image.open(self.images_in_file_path + "/" + img)
             width, height = im.size
             im = im.resize((width//2, height//2), Image.Resampling.LANCZOS)
-            im.save(self.images_out_file_path + "/scaled/" + img)
-            im.save(self.images_out_file_path + "/" + img, optimize=True, quality=70)
+            im.save(self.images_out_file_path + "/" + img, optimize=True, quality=self.image_quality)
 
 
 def main():
