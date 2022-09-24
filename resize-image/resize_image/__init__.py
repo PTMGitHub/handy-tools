@@ -12,6 +12,7 @@ class ResizeImage:
         )
         self.images_out_file_path = "resize_image/out"
         self.image_quality = 70
+        self.accepted_image_types = ["JPEG", "JPG", "PNG", "GIF" ]
 
     def setup_logger(self) -> None:
         logging.basicConfig(
@@ -47,10 +48,13 @@ class ResizeImage:
 
     def resize_images(self, images_list) -> list:
         for img in images_list:
-            im = Image.open(self.images_in_file_path + "/" + img)
-            width, height = im.size
-            im = im.resize((width//2, height//2), Image.Resampling.LANCZOS)
-            im.save(self.images_out_file_path + "/" + img, optimize=True, quality=self.image_quality)
+            if any(x in img.upper() for x in self.accepted_image_types):
+                im = Image.open(self.images_in_file_path + "/" + img)
+                width, height = im.size
+                im = im.resize((width//2, height//2), Image.Resampling.LANCZOS)
+                im.save(self.images_out_file_path + "/" + img, optimize=True, quality=self.image_quality)
+            else:
+                logging.info(f"{img} is not an accepted image type. Skipping file...")
 
 
 def main():
