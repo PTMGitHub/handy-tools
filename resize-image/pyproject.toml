@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "resize-image"
+version = "0.1.0"
+description = ""
+authors = ["Paul Marsh <61422343+PTMGitHub@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "resize_image"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Pillow = "^9.2.0"
+art = "^5.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+resize-image = "resize_image:main"
