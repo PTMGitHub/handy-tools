@@ -10,7 +10,7 @@ class ResizeImage:
         self.images_in_file_path = os.environ.get(
             "IMAGES_IN_FILE_PATH", "resize_image/in"
         )
-
+        self.images_out_file_path = "resize_image/out"
 
     def setup_logger(self) -> None:
         logging.basicConfig(

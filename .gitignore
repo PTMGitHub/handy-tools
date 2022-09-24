@@ -1,0 +1,14 @@
+__pycache__
+*.zip
+.coverage
+.history
+.DS_Store
+.idea/
+.pytest_cache/
+.mypy_cache
+.venv/
+.vscode/
+*.gpg
+*.pyc
+.resize-image/resize_image/in/*
+.resize-image/resize_image/out/*
