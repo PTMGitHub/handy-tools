@@ -23,8 +23,8 @@ def ensure_unique_team_group(groups: List[List[Tuple[str, str, str]]]) -> List[L
         groups = group_names(all_names, num_groups)
     return groups
 
-def assign_platform_teams(groups: List[List[Tuple[str, str, str]]]) -> List[Tuple[str, List[Tuple[str, str, str]]]]:
-    available_teams = PLATFORM_TEAMS[:]
+def assign_platform_teams(groups: List[List[Tuple[str, str, str]]], platform_teams) -> List[Tuple[str, List[Tuple[str, str, str]]]]:
+    available_teams = platform_teams
     group_with_platform = []
 
     for group in groups:
@@ -34,7 +34,8 @@ def assign_platform_teams(groups: List[List[Tuple[str, str, str]]]) -> List[Tupl
                 group_with_platform.append((platform_team, group))
                 available_teams.remove(platform_team)
                 break
-    return group_with_platform
+
+    return group_with_platform, available_teams
 
 def main():
     parser = argparse.ArgumentParser(description="Group names into teams.")
@@ -53,14 +54,15 @@ def main():
     remote_names = [name for name in names if name[2] == "remote"]
     office_names = [name for name in names if name[2] == "office"]
 
+
     remote_groups = group_names(remote_names, num_remote_groups)
     office_groups = group_names(office_names, num_office_groups)
 
     remote_groups = ensure_unique_team_group(remote_groups)
     office_groups = ensure_unique_team_group(office_groups)
 
-    remote_groups_with_platform = assign_platform_teams(remote_groups)
-    office_groups_with_platform = assign_platform_teams(office_groups)
+    remote_groups_with_platform, available_teams = assign_platform_teams(remote_groups, PLATFORM_TEAMS)
+    office_groups_with_platform, unassigned_teams = assign_platform_teams(office_groups, available_teams)
 
     print("Remote Groups:")
     for i, (platform_team, group) in enumerate(remote_groups_with_platform, 1):
@@ -71,6 +73,10 @@ def main():
     for i, (platform_team, group) in enumerate(office_groups_with_platform, 1):
         formatted_group = [(name, team) for name, team, _ in group]
         print(f"Group {i} (Platform Team: {platform_team}): {formatted_group}")
+
+    print("\nUnassigned Platform teams:")
+    for i in unassigned_teams:
+        print(f"{i}")
 
 if __name__ == "__main__":
     main()
