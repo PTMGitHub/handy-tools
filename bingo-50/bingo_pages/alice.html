@@ -1,0 +1,143 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bingo for Alice</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            h1 {
+                color: #333;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .bingo-wrapper {
+                margin-bottom: 50px;
+            }
+            .bingo-card {
+                display: grid;
+                grid-template-columns: repeat(5, 80px);
+                grid-template-rows: repeat(5, 80px);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .bingo-cell {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 80px;
+                height: 80px;
+                background-color: white;
+                border: 2px solid #333;
+                font-size: 24px;
+                font-weight: bold;
+                color: #555;
+                cursor: pointer;
+                transition: background-color 0.3s, color 0.3s;
+            }
+            .bingo-cell.free-space {
+                background-color: #f0f0f0;
+                color: #888;
+                cursor: default;
+            }
+            .bingo-cell.clicked {
+                background-color: #28a745;
+                color: white;
+            }
+            footer {
+                text-align: center;
+                margin-top: 20px;
+                font-size: 14px;
+                color: #888;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h1>Bingo for Alice</h1>
+
+        <div class="bingo-wrapper">
+            <h2>Bingo Card 1</h2>
+            <div class="bingo-card">
+    <div class="bingo-cell" onclick="toggleCell(this)">3</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">18</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">26</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">39</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">42</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">1</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">13</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">23</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">40</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">50</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">7</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">16</div>
+    <div class="bingo-cell free-space" onclick="toggleCell(this)">Free</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">32</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">49</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">8</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">19</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">24</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">31</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">43</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">2</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">15</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">30</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">38</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">45</div>
+</div>
+
+
+            <h2>Bingo Card 2</h2>
+            <div class="bingo-card">
+    <div class="bingo-cell" onclick="toggleCell(this)">6</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">17</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">26</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">40</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">50</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">2</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">13</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">21</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">31</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">49</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">3</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">19</div>
+    <div class="bingo-cell free-space" onclick="toggleCell(this)">Free</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">38</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">46</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">7</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">20</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">23</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">36</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">41</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">9</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">16</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">29</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">33</div>
+    <div class="bingo-cell" onclick="toggleCell(this)">42</div>
+</div>
+
+        </div>
+
+        <footer>
+            Click the numbers to mark them as called.
+        </footer>
+
+        <script>
+            function toggleCell(element) {
+                element.classList.toggle('clicked');
+            }
+        </script>
+
+    </body>
+    </html>
+    

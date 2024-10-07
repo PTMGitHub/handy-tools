@@ -7,6 +7,7 @@ class BingoMachine:
     def __init__(self, root):
         self.root = root
         self.root.title("Bingo Machine")
+        self.root.configure(bg="black")
 
         # Set of available numbers and drawn numbers (1 to 50)
         self.available_numbers = list(range(1, 6))
@@ -14,43 +15,43 @@ class BingoMachine:
 
         # Dictionary mapping numbers to their assigned text and image path
         self.number_texts = {
-            1: {"text": "One is the first and only.", "image": "images/image1.png"},
-            2: {"text": "Two's a pair!", "image": "images/image2.png"},
-            3: {"text": "Three is a magic number.", "image": "images/image1.png"},
+            1: {"text": "Earn and used Flexi Time", "image": None},
+            2: {"text": "Getting to work with Holly Hughes", "image": None},
+            3: {"text": "Unmanaged devices to allow a greater degree of freedom to use the tools you want to to carry out your job", "image": "images/image1.png"},
             4: {"text": "Four seasons in a year.", "image": "images/image2.png"},
             5: {"text": "Five fingers make a hand.", "image": None},  # No image for number 5
         }
 
         # Frame for current number display
-        self.current_number_frame = tk.Frame(self.root)
+        self.current_number_frame = tk.Frame(self.root, bg="black")
         self.current_number_frame.pack(pady=20)
 
         # Large label to display the current number
-        self.current_number_label = tk.Label(self.current_number_frame, text="", font=("Helvetica", 48), fg="blue")
+        self.current_number_label = tk.Label(self.current_number_frame, text="", font=("Helvetica", 250), fg="Orange", bg="black")
         self.current_number_label.pack()
 
         # Label to display the text associated with the current number
-        self.current_text_label = tk.Label(self.current_number_frame, text="", font=("Helvetica", 18), fg="green")
+        self.current_text_label = tk.Label(self.current_number_frame, text="", font=("Helvetica", 40), fg="white", bg="black", wraplength=1000)
         self.current_text_label.pack()
 
         # Label to display the image associated with the current number
-        self.current_image_label = tk.Label(self.current_number_frame)
+        self.current_image_label = tk.Label(self.current_number_frame, bg="black")
         self.current_image_label.pack(pady=10)
 
         # Button to draw the next number
-        self.next_number_button = tk.Button(self.root, text="Next Number", font=("Helvetica", 24), command=self.draw_next_number)
+        self.next_number_button = tk.Button(self.root, text="Next Number", font=("Helvetica", 24), command=self.draw_next_number, fg="black", bg="Orange")
         self.next_number_button.pack(pady=20)
 
         # Frame for displaying previously drawn numbers
-        self.previous_numbers_frame = tk.Frame(self.root)
+        self.previous_numbers_frame = tk.Frame(self.root, bg="black")
         self.previous_numbers_frame.pack()
 
         # Label to show the history of drawn numbers
-        self.previous_numbers_label = tk.Label(self.previous_numbers_frame, text="Previous Numbers:", font=("Helvetica", 16))
+        self.previous_numbers_label = tk.Label(self.previous_numbers_frame, text="Previous Numbers:", font=("Helvetica", 16), fg="light grey", bg="black")
         self.previous_numbers_label.pack()
 
         # Label to hold the list of previous numbers
-        self.previous_numbers_list_label = tk.Label(self.previous_numbers_frame, text="", font=("Helvetica", 14))
+        self.previous_numbers_list_label = tk.Label(self.previous_numbers_frame, text="", font=("Helvetica", 14), fg="light grey", bg="black", wraplength=1000)
         self.previous_numbers_list_label.pack()
 
     def draw_next_number(self):
@@ -88,7 +89,7 @@ class BingoMachine:
             # Update the list of previous numbers
             self.previous_numbers_list_label.config(text=", ".join(map(str, self.drawn_numbers)))
         else:
-            self.current_number_label.config(text="No more numbers!")
+            self.current_number_label.config(text="No more numbers!", font=("Helvetica", 80))
             self.current_text_label.config(text="That's all folks")
             self.current_image_label.image = None
             self.next_number_button.config(state=tk.DISABLED)
