@@ -34,7 +34,7 @@ def generate_bingo_card_html(card):
     return html
 
 # Step 3: Function to generate the full HTML page for each person with updated 5x5 grid styling
-def generate_html_page(name, bingo_card1, bingo_card2):
+def generate_html_page(name, bingo_card1, bingo_card2, bingo_card3):
     return f'''
     <!DOCTYPE html>
     <html lang="en">
@@ -51,7 +51,6 @@ def generate_html_page(name, bingo_card1, bingo_card2):
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
             }}
             h1 {{
                 color: #333;
@@ -60,67 +59,66 @@ def generate_html_page(name, bingo_card1, bingo_card2):
             }}
             .bingo-wrapper {{
                 margin-bottom: 50px;
+                width: 100%;
+                max-width: 500px;
             }}
             .bingo-card {{
                 display: grid;
-                grid-template-columns: repeat(5, 80px);
-                grid-template-rows: repeat(5, 80px);
-                gap: 10px;
-                margin-bottom: 20px;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 5px;
             }}
             .bingo-cell {{
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 80px;
-                height: 80px;
                 background-color: white;
                 border: 2px solid #333;
-                font-size: 24px;
+                font-size: 20px;
                 font-weight: bold;
                 color: #555;
                 cursor: pointer;
                 transition: background-color 0.3s, color 0.3s;
+                aspect-ratio: 1;  /* Makes each cell a square */
             }}
             .bingo-cell.free-space {{
-                background-color: #f0f0f0;
-                color: #888;
+                background-color: #28a745;
+                color: white;
                 cursor: default;
             }}
             .bingo-cell.clicked {{
                 background-color: #28a745;
                 color: white;
             }}
-            footer {{
-                text-align: center;
-                margin-top: 20px;
-                font-size: 14px;
-                color: #888;
+            @media (max-width: 600px) {{
+                .bingo-cell {{
+                    font-size: 16px;
+                }}
+            }}
+            @media (max-width: 400px) {{
+                .bingo-cell {{
+                    font-size: 14px;
+                }}
             }}
         </style>
     </head>
     <body>
-
         <h1>Bingo for {name}</h1>
-
         <div class="bingo-wrapper">
             <h2>Bingo Card 1</h2>
             {generate_bingo_card_html(bingo_card1)}
-
             <h2>Bingo Card 2</h2>
             {generate_bingo_card_html(bingo_card2)}
+            <h2>Bingo Card 3</h2>
+            {generate_bingo_card_html(bingo_card3)}
         </div>
-
         <footer>
             Click the numbers to mark them as called.
         </footer>
-
         <script>
             function toggleCell(element) {{
                 element.classList.toggle('clicked');
             }}
         </script>
-
     </body>
     </html>
     '''
@@ -131,9 +129,9 @@ def generate_html_files_for_names(names):
         # Generate two Bingo cards for each person
         bingo_card1 = generate_bingo_card()
         bingo_card2 = generate_bingo_card()
-
+        bingo_card3 = generate_bingo_card()
         # Generate the HTML content
-        html_content = generate_html_page(name, bingo_card1, bingo_card2)
+        html_content = generate_html_page(name, bingo_card1, bingo_card2, bingo_card3)
 
         # Write the content to an HTML file with the person's name
         filename = f"bingo_pages/{name.lower().replace(' ', '_')}.html"
