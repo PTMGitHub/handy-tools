@@ -140,5 +140,5 @@ def generate_html_files_for_names(names):
         print(f"Generated HTML file for {name}: {filename}")
 
 # Step 5: List of names and generating the HTML files
-names = ["Alice", "Bob", "Charlie", "David"]
+names = ["holly.hugues", "annable.njenga", "tim.fothergill", "marcus.mee","nerea.harris","saskia.leach","max.baro","sam.pickering","ash.plane","andrew.lynn","craig.beetles","colin.barnes","ashely.davies","martina.johnson","nathan.ogara","phil.rodgers","justin.collins","harry.cave","paul.marsh","rizina.khatun","ainsley.gilligan","sergiu.cimpian","james.blore","micheal.rodrigo.vinulan","robert.best","sam.soloman","brian.wakenshaw","luke.young","spare1","spare2","spare3","spare4","spare5"]
 generate_html_files_for_names(names)
