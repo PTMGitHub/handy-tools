@@ -1,0 +1,21 @@
+[project]
+name = "generate-class-dates"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "PTMGitHub",email = "61422343+PTMGitHub@users.noreply.github.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas (>=2.2.3,<3.0.0)",
+    "openpyxl (>=3.1.5,<4.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "generate_class_dates", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
