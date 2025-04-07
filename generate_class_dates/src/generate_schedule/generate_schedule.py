@@ -54,4 +54,4 @@ def generate_schedule(year):
 
 
 # Example usage
-generate_schedule(2024)
+generate_schedule(2025)
