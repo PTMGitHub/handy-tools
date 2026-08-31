@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Instagram Collage Maker</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --panel: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #e1306c;
+    --accent-dark: #c1275a;
+    --border: #e5e5e5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 24px;
+  }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 4px;
+  }
+  p.sub {
+    color: var(--muted);
+    margin: 0 0 20px;
+    font-size: 14px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+  .layout-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .layout-btn {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .layout-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .slots {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .slot {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #f5f5f5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+  .slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .slot.filled { border-style: solid; border-color: var(--border); cursor: grab; }
+  .slot.dragover { border-color: var(--accent); background: #fdeef3; }
+  .slot input[type=file] { display: none; }
+  .slot .icon-btn {
+    position: absolute;
+    top: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slot .remove-btn { right: 4px; }
+  .slot .adjust-btn { right: 30px; font-size: 12px; }
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  label.field {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  input[type=range] { width: 100px; }
+  input[type=color] { width: 36px; height: 28px; border: none; padding: 0; background: none; }
+  button.primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.primary:hover { background: var(--accent-dark); }
+  button.secondary {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .canvas-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  canvas { border-radius: 8px; }
+  #canvas {
+    max-width: 100%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .action-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 8px;
+  }
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .overlay.open { display: flex; }
+  .overlay-panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 92vw;
+  }
+  .overlay-panel h3 { margin: 0; font-size: 15px; }
+  #adjustCanvas {
+    cursor: grab;
+    border-radius: 8px;
+    touch-action: none;
+    max-width: 80vw;
+    max-height: 60vh;
+  }
+  #adjustCanvas.dragging { cursor: grabbing; }
+  .overlay-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .overlay-actions {
+    display: flex;
+    gap: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Instagram Collage Maker</h1>
+  <p class="sub">Upload 1–5 photos, pick a layout, fine-tune the crop of each photo, and export a 1080×1080 square.</p>
+
+  <div class="panel">
+    <div class="layout-row" id="layoutRow"></div>
+    <div class="slots" id="slots"></div>
+    <div class="controls-row">
+      <label class="field">Gap <input type="range" id="gapRange" min="0" max="30" value="6"></label>
+      <label class="field">Background <input type="color" id="bgColor" value="#ffffff"></label>
+      <label class="field">Corner rounding <input type="range" id="radiusRange" min="0" max="40" value="0"></label>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="canvas" width="1080" height="1080"></canvas>
+  </div>
+
+  <div class="action-row">
+    <button class="secondary" id="resetBtn">Reset</button>
+    <button class="primary" id="downloadBtn">Download PNG</button>
+  </div>
+  <p class="hint">Click a tile to upload a photo. Drag a filled tile onto another to swap order. Use the crop icon to reposition/zoom within its section.</p>
+</div>
+
+<div class="overlay" id="adjustOverlay">
+  <div class="overlay-panel">
+    <h3>Drag to reposition · scroll or use slider to zoom</h3>
+    <canvas id="adjustCanvas"></canvas>
+    <div class="overlay-controls">
+      Zoom
+      <input type="range" id="zoomRange" min="1" max="3" step="0.01" value="1">
+    </div>
+    <div class="overlay-actions">
+      <button class="secondary" id="adjustCancel">Cancel</button>
+      <button class="primary" id="adjustDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const layouts = {
+  "1": { count: 1, cells: [
+    {x:0,y:0,w:1,h:1}
+  ]},
+  "2-side": { count: 2, cells: [
+    {x:0,y:0,w:0.5,h:1},{x:0.5,y:0,w:0.5,h:1}
+  ]},
+  "2-stack": { count: 2, cells: [
+    {x:0,y:0,w:1,h:0.5},{x:0,y:0.5,w:1,h:0.5}
+  ]},
+  "3-feature": { count: 3, cells: [
+    {x:0,y:0,w:1,h:0.55},
+    {x:0,y:0.55,w:0.5,h:0.45},
+    {x:0.5,y:0.55,w:0.5,h:0.45}
+  ]},
+  "3-column": { count: 3, cells: [
+    {x:0,y:0,w:1/3,h:1},{x:1/3,y:0,w:1/3,h:1},{x:2/3,y:0,w:1/3,h:1}
+  ]},
+  "4-grid": { count: 4, cells: [
+    {x:0,y:0,w:0.5,h:0.5},{x:0.5,y:0,w:0.5,h:0.5},
+    {x:0,y:0.5,w:0.5,h:0.5},{x:0.5,y:0.5,w:0.5,h:0.5}
+  ]},
+  "4-feature": { count: 4, cells: [
+    {x:0,y:0,w:0.66,h:0.66},
+    {x:0.66,y:0,w:0.34,h:0.33},
+    {x:0.66,y:0.33,w:0.34,h:0.33},
+    {x:0,y:0.66,w:1,h:0.34}
+  ]},
+  "5-feature": { count: 5, cells: [
+    {x:0,y:0,w:0.6,h:0.6},
+    {x:0.6,y:0,w:0.4,h:0.3},
+    {x:0.6,y:0.3,w:0.4,h:0.3},
+    {x:0,y:0.6,w:0.5,h:0.4},
+    {x:0.5,y:0.6,w:0.5,h:0.4}
+  ]},
+  "5-strip": { count: 5, cells: [
+    {x:0,y:0,w:1,h:0.5},
+    {x:0,y:0.5,w:0.2,h:0.5},
+    {x:0.2,y:0.5,w:0.2,h:0.5},
+    {x:0.4,y:0.5,w:0.2,h:0.5},
+    {x:0.6,y:0.5,w:0.4,h:0.5}
+  ]}
+};
+
+const layoutLabels = {
+  "1": "1 · Single",
+  "2-side": "2 · Side by Side",
+  "2-stack": "2 · Stacked",
+  "3-feature": "3 · Featured",
+  "3-column": "3 · Columns",
+  "4-grid": "4 · Even Grid",
+  "4-feature": "4 · Featured",
+  "5-feature": "5 · Featured",
+  "5-strip": "5 · Strip"
+};
+
+let currentLayout = "4-grid";
+// each image: {src, img, offsetX, offsetY, zoom}  offsetX/offsetY in [0,1], zoom >= 1
+let images = new Array(5).fill(null);
+let adjustingIndex = null;
+let adjustState = null; // working copy while overlay open
+
+const layoutRow = document.getElementById('layoutRow');
+const slotsEl = document.getElementById('slots');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const gapRange = document.getElementById('gapRange');
+const bgColor = document.getElementById('bgColor');
+const radiusRange = document.getElementById('radiusRange');
+
+const adjustOverlay = document.getElementById('adjustOverlay');
+const adjustCanvas = document.getElementById('adjustCanvas');
+const adjustCtx = adjustCanvas.getContext('2d');
+const zoomRange = document.getElementById('zoomRange');
+
+function buildLayoutButtons() {
+  layoutRow.innerHTML = '';
+  Object.keys(layouts).forEach(key => {
+    const btn = document.createElement('button');
+    btn.className = 'layout-btn' + (key === currentLayout ? ' active' : '');
+    btn.textContent = layoutLabels[key];
+    btn.onclick = () => { currentLayout = key; render(); };
+    layoutRow.appendChild(btn);
+  });
+}
+
+function buildSlots() {
+  const layout = layouts[currentLayout];
+  slotsEl.innerHTML = '';
+  slotsEl.style.gridTemplateColumns = `repeat(${Math.min(layout.count, 3)}, 1fr)`;
+  for (let i = 0; i < layout.count; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'slot' + (images[i] ? ' filled' : '');
+    slot.dataset.index = i;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => handleFile(e, i);
+
+    if (images[i]) {
+      const img = document.createElement('img');
+      img.src = images[i].src;
+      slot.appendChild(img);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'icon-btn remove-btn';
+      removeBtn.textContent = '×';
+      removeBtn.onclick = (e) => {
+        e.stopPropagation();
+        images[i] = null;
+        buildSlots();
+        render();
+      };
+      slot.appendChild(removeBtn);
+
+      const adjustBtn = document.createElement('button');
+      adjustBtn.className = 'icon-btn adjust-btn';
+      adjustBtn.textContent = '⤢';
+      adjustBtn.title = 'Reposition / zoom';
+      adjustBtn.onclick = (e) => {
+        e.stopPropagation();
+        openAdjust(i);
+      };
+      slot.appendChild(adjustBtn);
+
+      slot.draggable = true;
+      slot.ondragstart = (e) => {
+        e.dataTransfer.setData('text/plain', String(i));
+        e.dataTransfer.effectAllowed = 'move';
+      };
+    } else {
+      slot.textContent = `Tap to add photo ${i + 1}`;
+    }
+
+    slot.ondragover = (e) => {
+      e.preventDefault();
+      slot.classList.add('dragover');
+    };
+    slot.ondragleave = () => slot.classList.remove('dragover');
+    slot.ondrop = (e) => {
+      e.preventDefault();
+      slot.classList.remove('dragover');
+      const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+      if (isNaN(fromIndex) || fromIndex === i) return;
+      const temp = images[i];
+      images[i] = images[fromIndex];
+      images[fromIndex] = temp;
+      buildSlots();
+      render();
+    };
+
+    slot.appendChild(input);
+    slot.onclick = () => input.click();
+    slotsEl.appendChild(slot);
+  }
+}
+
+function handleFile(e, index) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      images[index] = { src: ev.target.result, img, offsetX: 0.5, offsetY: 0.5, zoom: 1 };
+      buildSlots();
+      render();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Computes the source-rect crop for a given image/cell-ratio/offset/zoom
+function computeCrop(img, cellRatio, offsetX, offsetY, zoom) {
+  const imgRatio = img.width / img.height;
+  let baseCW, baseCH;
+  if (imgRatio > cellRatio) {
+    baseCH = img.height;
+    baseCW = baseCH * cellRatio;
+  } else {
+    baseCW = img.width;
+    baseCH = baseCW / cellRatio;
+  }
+  const cw = baseCW / zoom;
+  const ch = baseCH / zoom;
+  const maxX = Math.max(img.width - cw, 0);
+  const maxY = Math.max(img.height - ch, 0);
+  const sx = maxX * offsetX;
+  const sy = maxY * offsetY;
+  return { sx, sy, sw: cw, sh: ch };
+}
+
+function drawCover(ctx, entry, x, y, w, h) {
+  const crop = computeCrop(entry.img, w / h, entry.offsetX, entry.offsetY, entry.zoom);
+  ctx.drawImage(entry.img, crop.sx, crop.sy, crop.sw, crop.sh, x, y, w, h);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function render() {
+  buildLayoutButtons();
+  buildSlots();
+  const size = 1080;
+  const gap = parseInt(gapRange.value, 10);
+  const radius = parseInt(radiusRange.value, 10);
+  ctx.clearRect(0, 0, size, size);
+  ctx.fillStyle = bgColor.value;
+  ctx.fillRect(0, 0, size, size);
+
+  const layout = layouts[currentLayout];
+  layout.cells.forEach((cell, i) => {
+    const x = cell.x * size + gap / 2;
+    const y = cell.y * size + gap / 2;
+    const w = cell.w * size - gap;
+    const h = cell.h * size - gap;
+
+    ctx.save();
+    if (radius > 0) {
+      roundRect(ctx, x, y, w, h, radius);
+      ctx.clip();
+    }
+    if (images[i]) {
+      drawCover(ctx, images[i], x, y, w, h);
+    } else {
+      ctx.fillStyle = '#eeeeee';
+      ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = '#bbbbbb';
+      ctx.font = '28px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${i + 1}`, x + w / 2, y + h / 2);
+    }
+    ctx.restore();
+  });
+}
+
+// ---- Adjust overlay ----
+function openAdjust(index) {
+  adjustingIndex = index;
+  const entry = images[index];
+  adjustState = { offsetX: entry.offsetX, offsetY: entry.offsetY, zoom: entry.zoom };
+
+  const layout = layouts[currentLayout];
+  const cell = layout.cells[index];
+  const cellRatio = cell.w / cell.h;
+
+  const maxW = Math.min(window.innerWidth * 0.8, 640);
+  const maxH = Math.min(window.innerHeight * 0.6, 640);
+  let cw = maxW, ch = maxW / cellRatio;
+  if (ch > maxH) { ch = maxH; cw = maxH * cellRatio; }
+  adjustCanvas.width = Math.round(cw);
+  adjustCanvas.height = Math.round(ch);
+
+  zoomRange.value = entry.zoom;
+  adjustOverlay.classList.add('open');
+  renderAdjust();
+}
+
+function renderAdjust() {
+  const entry = images[adjustingIndex];
+  const w = adjustCanvas.width, h = adjustCanvas.height;
+  adjustCtx.clearRect(0, 0, w, h);
+  const crop = computeCrop(entry.img, w / h, adjustState.offsetX, adjustState.offsetY, adjustState.zoom);
+  adjustCtx.drawImage(entry.img, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, w, h);
+}
+
+let dragging = false, dragStartX = 0, dragStartY = 0, startOffsetX = 0, startOffsetY = 0;
+
+adjustCanvas.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  adjustCanvas.classList.add('dragging');
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  startOffsetX = adjustState.offsetX;
+  startOffsetY = adjustState.offsetY;
+  adjustCanvas.setPointerCapture(e.pointerId);
+});
+adjustCanvas.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const entry = images[adjustingIndex];
+  const crop = computeCrop(entry.img, adjustCanvas.width / adjustCanvas.height, adjustState.offsetX, adjustState.offsetY, adjustState.zoom);
+  const maxX = Math.max(entry.img.width - crop.sw, 0);
+  const maxY = Math.max(entry.img.height - crop.sh, 0);
+  const dxPixels = e.clientX - dragStartX;
+  const dyPixels = e.clientY - dragStartY;
+  const dxSource = dxPixels * (crop.sw / adjustCanvas.width);
+  const dySource = dyPixels * (crop.sh / adjustCanvas.height);
+  const newOffsetX = maxX === 0 ? 0.5 : clamp(startOffsetX - dxSource / maxX, 0, 1);
+  const newOffsetY = maxY === 0 ? 0.5 : clamp(startOffsetY - dySource / maxY, 0, 1);
+  adjustState.offsetX = newOffsetX;
+  adjustState.offsetY = newOffsetY;
+  renderAdjust();
+});
+adjustCanvas.addEventListener('pointerup', () => { dragging = false; adjustCanvas.classList.remove('dragging'); });
+adjustCanvas.addEventListener('pointerleave', () => { dragging = false; adjustCanvas.classList.remove('dragging'); });
+
+adjustCanvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const delta = e.deltaY < 0 ? 0.05 : -0.05;
+  adjustState.zoom = clamp(adjustState.zoom + delta, 1, 3);
+  zoomRange.value = adjustState.zoom;
+  renderAdjust();
+}, { passive: false });
+
+zoomRange.oninput = () => {
+  adjustState.zoom = parseFloat(zoomRange.value);
+  renderAdjust();
+};
+
+function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+document.getElementById('adjustCancel').onclick = () => {
+  adjustOverlay.classList.remove('open');
+  adjustingIndex = null;
+};
+document.getElementById('adjustDone').onclick = () => {
+  const entry = images[adjustingIndex];
+  entry.offsetX = adjustState.offsetX;
+  entry.offsetY = adjustState.offsetY;
+  entry.zoom = adjustState.zoom;
+  adjustOverlay.classList.remove('open');
+  adjustingIndex = null;
+  render();
+};
+
+gapRange.oninput = render;
+bgColor.oninput = render;
+radiusRange.oninput = render;
+
+document.getElementById('resetBtn').onclick = () => {
+  images = new Array(5).fill(null);
+  render();
+};
+
+document.getElementById('downloadBtn').onclick = () => {
+  const link = document.createElement('a');
+  link.download = 'instagram-collage.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+};
+
+render();
+</script>
+</body>
+</html>
