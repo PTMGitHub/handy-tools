@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "format-osm-scout-details"
+version = "0.1.0"
+description = "Convert an OSM Personal Details export into a compact, printable leader's reference sheet."
+authors = ["PTMGitHub <61422343+PTMGitHub@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "format_osm_scout_details"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openpyxl = "^3.1.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+format-osm-scout-details = "format_osm_scout_details:main"
