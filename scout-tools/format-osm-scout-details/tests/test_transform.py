@@ -121,7 +121,7 @@ def test_build_info_is_blank_when_no_fields_present():
     assert build_info(make_record()) == ""
 
 
-def test_sort_records_groups_by_patrol_first_seen_order_then_dob_oldest_first():
+def test_sort_records_orders_by_dob_oldest_first_across_patrols():
     older_fox = make_record(first_name="Oliver", patrol_name="Foxes", dob=date(2013, 11, 2))
     younger_fox = make_record(first_name="Amelia", patrol_name="Foxes", dob=date(2014, 3, 12))
     older_badger = make_record(first_name="Jack", patrol_name="Badgers", dob=date(2013, 1, 30))
@@ -131,10 +131,10 @@ def test_sort_records_groups_by_patrol_first_seen_order_then_dob_oldest_first():
 
     sorted_records = sort_records(records)
 
-    assert [r.first_name for r in sorted_records] == ["Oliver", "Amelia", "Jack"]
+    assert [r.first_name for r in sorted_records] == ["Jack", "Oliver", "Amelia"]
 
 
-def test_sort_records_puts_missing_dob_last_within_its_patrol():
+def test_sort_records_puts_missing_dob_last():
     dated_fox = make_record(first_name="Amelia", patrol_name="Foxes", dob=date(2014, 3, 12))
     no_dob_fox = make_record(first_name="Alex", patrol_name="Foxes", dob=None)
 

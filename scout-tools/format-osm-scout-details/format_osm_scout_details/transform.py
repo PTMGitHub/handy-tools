@@ -95,17 +95,11 @@ def transform(record: ScoutRecord) -> OutputRow:
 
 
 def sort_records(records: List[ScoutRecord]) -> List[ScoutRecord]:
-    """Group by Patrol Name (in first-seen order), then oldest DOB first
-    within each patrol. Records with no parseable DOB sort last within
-    their patrol rather than crashing the comparison."""
-    patrol_order = []
-    for record in records:
-        if record.patrol_name not in patrol_order:
-            patrol_order.append(record.patrol_name)
+    """Oldest DOB first. Records with no parseable DOB sort last rather
+    than crashing the comparison."""
 
     def sort_key(record: ScoutRecord):
         return (
-            patrol_order.index(record.patrol_name),
             record.dob is None,
             record.dob or date.min,
         )
